@@ -1,3 +1,5 @@
+import time
+import random
 from typing import List
 
 import requests
@@ -13,6 +15,15 @@ api_search = 'https://api.bilibili.com/x/space/arc/search'
 api_user = 'https://space.bilibili.com/{}'
 
 
+def random_sleep(func, mu=2, sigma=0.3):
+    def wrapper(*args, **kwargs):
+        t = random.normalvariate(mu, sigma)
+        time.sleep(max(t, 0))
+        return func(*args, **kwargs)
+    return wrapper
+
+
+@random_sleep
 def get_info(bvid: str, cookie=None) -> VideoInfo:
     """
     获取视频基本信息
@@ -26,6 +37,7 @@ def get_info(bvid: str, cookie=None) -> VideoInfo:
     return response.json()['data']
 
 
+@random_sleep
 def get_video_tags(bvid: str, cookie=None) -> List[Tag]:
     """
     获取视频标签信息
@@ -39,6 +51,7 @@ def get_video_tags(bvid: str, cookie=None) -> List[Tag]:
     return response.json()['data']
 
 
+@random_sleep
 def get_video_pages(bvid: str, cookie=None) -> List[Page]:
     """
     获取视频所有分P信息
@@ -49,10 +62,10 @@ def get_video_pages(bvid: str, cookie=None) -> List[Page]:
     assert BVID_PATTERN.match(bvid), f"Invalid BVID format: {bvid}"
     response = requests.get(api_pagelist_url.format(bvid), headers=make_header(cookie))  # code, message, ttl, data
     assert response.status_code == 200, f"Failed to get video pages, status code: {response.status_code}"
-    print(response.json())
     return response.json()['data']
 
 
+@random_sleep
 def get_user_access_details(bvid: str, cid: int, cookie=None) -> VideoDetails:
     """
 
@@ -67,7 +80,8 @@ def get_user_access_details(bvid: str, cid: int, cookie=None) -> VideoDetails:
     return response.json()['data']
 
 
-def get_subtitles(subtitle_url, cookie=None) -> SubtitleData:
+@random_sleep
+def get_subtitles_from_url(subtitle_url, cookie=None) -> SubtitleData:
     """
     获取视频字幕
     :param subtitle_url: 字幕url，可以通过get_user_access_details获取
@@ -77,3 +91,21 @@ def get_subtitles(subtitle_url, cookie=None) -> SubtitleData:
     response = requests.get(subtitle_url, headers=make_header(cookie))
     assert response.status_code == 200, f"failed to get subtitles, status code: {response.status_code}"
     return response.json()
+
+
+def get_subtitles(bvid: str, cookie=None) -> SubtitleData:
+    """
+    获取某个bvid第一P的字幕
+    :param bvid: 视频bvid
+    :param cookie:
+    :return:
+    """
+    pages = get_video_pages(bvid)
+
+    cid = pages[0]['cid']  # 第一个分P的cid
+    details = get_user_access_details(bvid, cid, cookie=cookie)
+
+    subtitle_url = "https:" + details["subtitle"]["subtitles"][0]['subtitle_url']
+    subtitles = get_subtitles_from_url(subtitle_url)
+    return subtitles
+
