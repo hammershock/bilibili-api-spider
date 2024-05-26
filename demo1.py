@@ -14,4 +14,3 @@ if __name__ == '__main__':
         for attrs in get_user_videos(browser, mid):
             f.write(" ".join(attrs) + '\n')
         os.rename("info.txt", f"{attrs[1]}.txt")
-3
