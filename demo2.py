@@ -7,7 +7,7 @@ from bili_api import get_info, get_video_tags, get_video_pages, get_subtitles, g
 
 
 if __name__ == '__main__':
-    cookie = ...  # 替换为你的b站cookies, 或者将cookies写入bilibili_api/cookies.txt
+    cookie = None  # 替换为你的b站cookies, 或者将cookies写入bilibili_api/cookies.txt
 
     bvid = "BV1Yz421a7iJ"
     info = get_info(bvid, cookie)

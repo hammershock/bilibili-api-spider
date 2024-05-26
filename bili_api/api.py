@@ -2,8 +2,8 @@ from typing import List
 
 import requests
 
-from header import make_header
-from typing_ import VideoInfo, Tag, Page, VideoDetails, SubtitleData, BVID_PATTERN
+from .header import make_header
+from .typing_ import VideoInfo, Tag, Page, VideoDetails, SubtitleData, BVID_PATTERN
 
 api_view_url = 'https://api.bilibili.com/x/web-interface/view'
 api_tag_url = 'https://api.bilibili.com/x/web-interface/view/detail/tag'
