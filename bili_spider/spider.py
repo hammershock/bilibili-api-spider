@@ -9,19 +9,21 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from tqdm import tqdm
 
+from .timestring import parse_timestring
 
-api_user = 'https://space.bilibili.com/{}/video?tid=0&page={}&keyword=&order=pubdate'
+api_user = 'https://space.bilibili.com/{}/video?tid=0&pn={}&keyword=&order=pubdate'
 
 
 @contextmanager
-def make_chrome_browser(executable_path=None):
+def make_chrome_browser(executable_path=None, headless=True):
     """
 
     :param executable_path: chrome driver path
     :return:
     """
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    if headless:
+        options.add_argument('--headless')
     service = Service(executable_path=executable_path)
     browser = webdriver.Chrome(options=options, service=service)
     try:
@@ -43,15 +45,17 @@ def __get_user_videos(browser, mid: int, page: int = 1, p_bar=None, user_name=No
         p_bar = tqdm(total=num_page, desc=f"grabbing user {user_name}")
 
     ul_data = html.find('div', id='submit-video-list').find('ul', attrs={'class': 'clearfix cube-list'})
+    p_bar.set_postfix(page=page)
     for li in ul_data.find_all('li'):
         a = li.find('a', attrs={'target': '_blank', 'class': 'title'})
         url = 'https:{}'.format(a['href'])  # 'https://www.bilibili.com/video/BV1ws421g7Tw/'
         bvid = url.strip("/").split("/")[-1]
         title = a.text  # '红警基地车引诱一下！对手果然上当，全歼敌军坦克！'
-        pub_date = li.find('span', attrs={'class': 'time'}).text.strip()  # '5小时前'
+        pub_date_string = li.find('span', attrs={'class': 'time'}).text.strip()  # '5小时前'
+        pub_datetime = parse_timestring(pub_date_string)
         num_plays = li.find('span', attrs={'class': 'play'}).text.strip()  # '10.8万'
         duration = li.find('span', attrs={'class': 'length'}).text.strip()  # '11:02'
-        yield url, bvid, user_name, title, num_plays, pub_date, duration
+        yield url, bvid, user_name, title, num_plays, str(pub_datetime), duration
 
     p_bar.update(1)
     if page == 1:
