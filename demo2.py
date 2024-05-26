@@ -3,7 +3,7 @@
 或者TypeHint
 """
 
-from bili_api import get_info, get_video_tags, get_video_pages, get_subtitles, get_user_access_details
+from bili_api import get_info, get_video_tags, get_video_pages, get_subtitles_from_url, get_user_access_details
 
 
 if __name__ == '__main__':
@@ -24,5 +24,5 @@ if __name__ == '__main__':
     print(details)
 
     subtitle_url = "https:" + details["subtitle"]["subtitles"][0]['subtitle_url']
-    subtitles = get_subtitles(subtitle_url, cookie)
+    subtitles = get_subtitles_from_url(subtitle_url, cookie)
     print(subtitles)
