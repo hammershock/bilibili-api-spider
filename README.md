@@ -2,6 +2,12 @@
 
 这个项目提供了一个通过UP主ID获取全部发布视频信息，以及根据视频号(BVID)获取视频信息，如播放量，点赞数，视频字幕等。
 
+[![requests](https://img.shields.io/badge/requests-2.32.2-blue)](https://pypi.org/project/requests/)
+[![bs4](https://img.shields.io/badge/bs4-0.0.2-blue)](https://pypi.org/project/bs4/)
+[![beautifulsoup4](https://img.shields.io/badge/beautifulsoup4-4.12.3-blue)](https://pypi.org/project/beautifulsoup4/)
+[![selenium](https://img.shields.io/badge/selenium-4.21.0-blue)](https://pypi.org/project/selenium/)
+[![tqdm](https://img.shields.io/badge/tqdm-4.66.4-blue)](https://pypi.org/project/tqdm/)
+
 ## 主要功能：
 - 获取UP主发布的所有视频信息
 - 获取视频的详细视频信息，视频字幕
