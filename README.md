@@ -2,11 +2,12 @@
 
 这个项目提供了一个通过UP主ID获取全部发布视频信息，以及根据视频号(BVID)获取视频信息，如播放量，点赞数，视频字幕等。
 
-[![requests](https://img.shields.io/badge/requests-2.32.2-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://pypi.org/project/requests/)
-[![bs4](https://img.shields.io/badge/bs4-0.0.2-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://pypi.org/project/bs4/)
-[![beautifulsoup4](https://img.shields.io/badge/beautifulsoup4-4.12.3-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://pypi.org/project/beautifulsoup4/)
-[![selenium](https://img.shields.io/badge/selenium-4.21.0-43B02A?style=for-the-badge&logo=selenium&logoColor=white)](https://pypi.org/project/selenium/)
-[![tqdm](https://img.shields.io/badge/tqdm-4.66.4-0078D7?style=for-the-badge&logo=tqdm&logoColor=white)](https://pypi.org/project/tqdm/)
+[![requests](https://img.shields.io/badge/requests-2.32.2-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/requests/)
+[![bs4](https://img.shields.io/badge/bs4-0.0.2-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/bs4/)
+[![beautifulsoup4](https://img.shields.io/badge/beautifulsoup4-4.12.3-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/beautifulsoup4/)
+[![selenium](https://img.shields.io/badge/selenium-4.21.0-43B02A?style=flat-square&logo=selenium&logoColor=white)](https://pypi.org/project/selenium/)
+[![tqdm](https://img.shields.io/badge/tqdm-4.66.4-0078D7?style=flat-square&logo=tqdm&logoColor=white)](https://pypi.org/project/tqdm/)
+
 
 ## 主要功能：
 - 获取UP主发布的所有视频信息
