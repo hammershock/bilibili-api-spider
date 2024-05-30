@@ -6,11 +6,15 @@
 - 获取UP主发布的所有视频信息
 - 获取视频的详细视频信息，视频字幕
 
-### 1. 获取视频的详细信息
+## 依赖
 
 ```bash
-pip install requests bs4
+pip install selenium bs4 requests
+pip install tqdm
 ```
+
+## 使用方法
+eg.1 获取UP主所有视频信息:
 
 直接通过api访问，注意要使用cookies才更容易成功
 cookies可以在登陆b站后，在网页通过`F12`-`网络` 监听与bilibili的通信获得
@@ -19,28 +23,50 @@ cookies可以在登陆b站后，在网页通过`F12`-`网络` 监听与bilibili�
 注意: api滥用会导致对应api功能暂时封禁！！
 所有访问api获取视频信息的方法在`bili_api`中，详细返回值示例在`bili_api/response_demo`
 
+```python
+import os
+from bili_spider import make_chrome_browser, get_user_videos
 
-### 2. 获取UP主所有视频信息
-需要用到`selenium`爬取
-```bash
-pip install selenium bs4
-pip install tqdm
+
+if __name__ == '__main__':
+    mid = 1629347259  # 用户id
+
+    with make_chrome_browser(executable_path="./chromedriver", headless=False) as browser, open("info.txt", "w") as f:
+        for attrs in get_user_videos(browser, mid):  # 获取特定mid用户的全部视频属性,类型均为字符串
+            f.write("\t".join(attrs) + '\n')
+            # 视频url，视频bv号，用户名，视频标题，播放量，发布日期，视频时长
+            url, bvid, user_name, title, num_plays, pub_datetime, duration = attrs
+            UP_name = attrs[2]
+        os.rename("info.txt", f"{UP_name}.txt")  # 将结果保存至{UP_name}.txt
 ```
+eg.2 获取视频详细信息:
 
+需要用到`selenium`爬取
 然后安装`chrome`和对应版本的`chrome driver`，注意第一个点之前的版本号一定要对应
 
-这里提供Ubuntu上安装流程，其余系统自己搜索: 
-1. 安装chrome，比如我从里面选择了104.0.5112.102
-    - [Slimjet - 旧版本的chrome](https://www.slimjet.com/chrome/google-chrome-old-version.php)
-    
-    ```bash
-    sudo dpkg -i google-chrome-stable_current_amd64.deb  # 安装下载的chrome安装包
-    sudo apt-get -f install  # 解决依赖关系
-    sudo apt-mark hold google-chrome-stable  # 锁定 Chrome 版本，防止自动更新
-    ```
-   
-2. 安装chrome driver
-    ```bash
-    wget https://chromedriver.storage.googleapis.com/104.0.5112.79/chromedriver_linux64.zip  # 获取104.0.5112.79版本的chromedriver
-    unzip chromedriver_linux64.zip
-    ```
+```python
+from bili_api import get_info, get_video_tags, get_video_pages, get_subtitles_from_url, get_user_access_details
+
+
+if __name__ == '__main__':
+    cookie = None  # 替换为你的b站cookies, 或者将cookies写入bilibili_api/cookies.txt
+
+    bvid = "BV1Yz421a7iJ"
+    info = get_info(bvid, cookie)
+    print("info", info)
+
+    tags = get_video_tags(bvid, cookie)
+    print(tags)
+
+    pages = get_video_pages(bvid, cookie)
+    print(pages)
+
+    cid = pages[0]['cid']  # 第一个分P的cid
+    details = get_user_access_details(bvid, cid, cookie)
+    print(details)
+
+    subtitle_url = "https:" + details["subtitle"]["subtitles"][0]['subtitle_url']
+    subtitles = get_subtitles_from_url(subtitle_url, cookie)
+    print(subtitles)
+
+```
