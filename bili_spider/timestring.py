@@ -6,6 +6,7 @@ def parse_timestring(timestring: str) -> datetime:
     now = datetime.now()
 
     patterns = [
+        (r"刚刚", lambda m: now),  # 刚刚
         (r"(\d+)分钟前", lambda m: now - timedelta(minutes=int(m.group(1)))),
         (r"(\d+)小时前", lambda m: now - timedelta(hours=int(m.group(1)))),
         (r"昨天", lambda m: now - timedelta(days=1)),
