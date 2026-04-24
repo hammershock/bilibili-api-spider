@@ -1,79 +1,31 @@
-# 与获取BILIBILI视频信息有关的爬虫+API访问
+# bilibili-api-spider (Archived)
+
+> **This project has been superseded by [bilicli](https://github.com/hammershock/bilibili-cli) — a full-featured, read-only Bilibili CLI tool for terminal and agent use.**
+>
+> `bilicli` provides everything this project did and much more: QR code login, video/user search, feed, subtitles, danmaku, comments, multi-part video support, audio download, cover download, and local speech-to-text transcription — all from a single `pip install`.
+>
+> **Please use [hammershock/bilibili-cli](https://github.com/hammershock/bilibili-cli) instead.**
+
+---
+
+## Original Description
+
+与获取BILIBILI视频信息有关的爬虫+API访问
 
 这个项目提供了一个通过UP主ID获取全部发布视频信息，以及根据视频号(BVID)获取视频信息，如播放量，点赞数，视频字幕等。
 
-[![requests](https://img.shields.io/badge/requests-2.32.2-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/requests/)
-[![bs4](https://img.shields.io/badge/bs4-0.0.2-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/bs4/)
-[![beautifulsoup4](https://img.shields.io/badge/beautifulsoup4-4.12.3-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/beautifulsoup4/)
-[![selenium](https://img.shields.io/badge/selenium-4.21.0-43B02A?style=flat-square&logo=selenium&logoColor=white)](https://pypi.org/project/selenium/)
-[![tqdm](https://img.shields.io/badge/tqdm-4.66.4-0078D7?style=flat-square&logo=tqdm&logoColor=white)](https://pypi.org/project/tqdm/)
+### Why bilicli?
 
-
-## 主要功能：
-- 获取UP主发布的所有视频信息
-- 获取视频的详细视频信息，视频字幕
-
-## 依赖
-
-```bash
-pip install selenium bs4 requests
-pip install tqdm
-```
-
-## 使用方法
-1. 获取UP主所有视频信息:
-
-直接通过api访问，注意要**使用cookies**才更容易成功
-cookies可以在登陆b站后，在网页通过`F12`-`网络` 监听与bilibili的通信获得
-可以在每次调用接口时传入cookies，也可以将cookies写入`bili_api/cookie.txt`
-
-注意: api滥用会导致对应api功能暂时封禁！！
-所有访问api获取视频信息的方法在`bili_api`中，[详细返回值示例](bili_api/response_demo)
-
-```python
-import os
-from bili_spider import make_chrome_browser, get_user_videos
-
-
-if __name__ == '__main__':
-    mid = 1629347259  # 用户id
-
-    with make_chrome_browser(executable_path="./chromedriver", headless=False) as browser, open("info.txt", "w") as f:
-        for attrs in get_user_videos(browser, mid):  # 获取特定mid用户的全部视频属性,类型均为字符串
-            f.write("\t".join(attrs) + '\n')
-            # 视频url，视频bv号，用户名，视频标题，播放量，发布日期，视频时长
-            url, bvid, user_name, title, num_plays, pub_datetime, duration = attrs
-            UP_name = attrs[2]
-        os.rename("info.txt", f"{UP_name}.txt")  # 将结果保存至{UP_name}.txt
-```
-2. 获取视频详细信息:
-
-需要用到`selenium`爬取
-要安装`chrome`和对应版本的`chrome driver`，注意第一个点之前的**版本号一定要对应**
-
-```python
-from bili_api import get_info, get_video_tags, get_video_pages, get_subtitles_from_url, get_user_access_details
-
-
-if __name__ == '__main__':
-    cookie = None  # 替换为你的b站cookies, 或者将cookies写入bilibili_api/cookies.txt
-
-    bvid = "BV1Yz421a7iJ"
-    info = get_info(bvid, cookie)
-    print("info", info)
-
-    tags = get_video_tags(bvid, cookie)
-    print(tags)
-
-    pages = get_video_pages(bvid, cookie)
-    print(pages)
-
-    cid = pages[0]['cid']  # 第一个分P的cid
-    details = get_user_access_details(bvid, cid, cookie)
-    print(details)
-
-    subtitle_url = "https:" + details["subtitle"]["subtitles"][0]['subtitle_url']
-    subtitles = get_subtitles_from_url(subtitle_url, cookie)
-    print(subtitles)
-
-```
+| Feature | bilibili-api-spider | bilicli |
+|---------|-------------------|---------|
+| Login | Manual cookie extraction | QR code scan |
+| Browser dependency | Requires Chrome + ChromeDriver | None |
+| Install | Manual dependency management | `pip install -e .` |
+| Video info | Basic API calls | Full CLI with `--json` output |
+| Multi-part videos | Manual CID extraction | `bilicli pages` + `--page N` |
+| Subtitles | Manual URL construction | `bilicli subtitle` |
+| Download | Not supported | Video, audio, cover |
+| Comments | Not supported | Comments + replies with pictures |
+| Search | Not supported | Video and user search |
+| Agent-friendly | No | `--json`, `--quiet`, pagination hints |
+| Transcription | No | Local mlx-whisper STT |
